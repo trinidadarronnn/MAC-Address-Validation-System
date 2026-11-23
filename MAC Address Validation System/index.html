@@ -32,3 +32,56 @@
         17 characters in total. The input is read one character at a time and the DFA moves
         from state to state until it accepts or rejects.
       </p>
+
+       <label for="macInput" class="field-label">Enter a MAC address</label>
+      <input id="macInput" type="text" placeholder="00:1A:2B:3C:4D:5E"
+             autocomplete="off" spellcheck="false">
+
+      <div class="button-row">
+        <button id="validateBtn" class="btn primary" type="button">Validate</button>
+        <button id="clearBtn" class="btn secondary" type="button">Clear</button>
+      </div>
+
+      <!-- Input shown as a "tape": one box per character -->
+      <div id="tape" class="tape" aria-label="Input characters"></div>
+
+      <!-- ===== B. Result ===== -->
+      <div id="result" class="result hidden" role="status" aria-live="polite">
+        <div id="resultWord" class="result-word"></div>
+        <p id="resultReason" class="result-reason"></p>
+        <p id="resultCheck" class="result-check"></p>
+      </div>
+    </section>
+
+    <!-- ===== C. DFA visualization ===== -->
+    <section id="dfa" class="card">
+      <h2>DFA Visualization</h2>
+      <p class="muted">
+        q0 is the start state, q17 (double circle) is the accepting state, and qd is the trap state.
+        "hex" means one of <code>0-9 A-F a-f</code>. Any other character, from any state, goes to qd.
+        The current state is highlighted while the input is processed.
+      </p>
+      <div class="diagram-wrap">
+        <!-- The SVG is drawn by script.js (buildDiagram) -->
+        <svg id="dfaSvg" viewBox="0 0 720 400" role="img"
+             aria-label="DFA with states q0 to q17 and trap state qd"></svg>
+      </div>
+      <div class="legend">
+        <span><i class="dot current"></i> Current state</span>
+        <span><i class="dot visited"></i> Visited</span>
+        <span><i class="dot accept"></i> Accepted</span>
+        <span><i class="dot reject"></i> Rejected / trap</span>
+      </div>
+
+      <h3>Step-by-step trace</h3>
+      <div class="table-scroll">
+        <table id="traceTable">
+          <thead>
+            <tr><th>Step</th><th>Character</th><th>Expected</th><th>From</th><th>To</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" class="muted">Validate a MAC address to see the trace.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
