@@ -85,3 +85,57 @@
         </table>
       </div>
     </section>
+
+     <!-- ===== D. Validation process ===== -->
+    <section id="process" class="card">
+      <h2>Validation Process</h2>
+      <ol id="processList" class="process">
+        <li>Enter a MAC address.</li>
+        <li>Read each character from left to right.</li>
+        <li>Check whether each character matches the expected hexadecimal character or colon.</li>
+        <li>Reach q17 if all 17 characters are valid.</li>
+        <li>Display ACCEPTED or NOT ACCEPTED.</li>
+      </ol>
+    </section>
+
+    <!-- ===== E. Sample test cases ===== -->
+    <section id="tests" class="card">
+      <h2>Sample Test Cases</h2>
+      <p class="muted">Click a MAC address to place it in the input field, then press Validate.</p>
+      <div class="table-scroll">
+        <table id="testTable">
+          <thead>
+            <tr><th>MAC Address</th><th>Expected Result</th><th>DFA Result</th></tr>
+          </thead>
+          <tbody>
+            <tr data-mac="00:1A:2B:3C:4D:5E" data-expected="ACCEPTED">
+              <td><button class="sample" type="button">00:1A:2B:3C:4D:5E</button></td>
+              <td>ACCEPTED</td><td class="actual">-</td></tr>
+            <tr data-mac="A1:B2:C3:D4:E5:F6" data-expected="ACCEPTED">
+              <td><button class="sample" type="button">A1:B2:C3:D4:E5:F6</button></td>
+              <td>ACCEPTED</td><td class="actual">-</td></tr>
+            <tr data-mac="00:1A:2B:3C:4D" data-expected="NOT ACCEPTED">
+              <td><button class="sample" type="button">00:1A:2B:3C:4D</button></td>
+              <td>NOT ACCEPTED</td><td class="actual">-</td></tr>
+            <tr data-mac="00:1A:2B:3C:4D:ZZ" data-expected="NOT ACCEPTED">
+              <td><button class="sample" type="button">00:1A:2B:3C:4D:ZZ</button></td>
+              <td>NOT ACCEPTED</td><td class="actual">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="button-row">
+        <button id="runTestsBtn" class="btn secondary" type="button">Run all test cases</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Design and Implementation of a DFA-Based Lexical Analyzer for MAC Address Validation
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
