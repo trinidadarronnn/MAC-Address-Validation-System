@@ -116,3 +116,18 @@ td.pass { color: var(--ok); font-weight: 700; }
 td.fail { color: var(--bad); font-weight: 700; }
 .sample { font-family: Consolas, monospace; font-size: 1rem; background: none; border: none;
           color: var(--primary); text-decoration: underline; cursor: pointer; padding: 2px 0; }
+
+          /* ===== Process list ===== */
+.process { padding-left: 22px; margin: 8px 0 0; }
+.process li { padding: 6px 10px; margin-bottom: 4px; border-radius: 6px; }
+.process li.on { background: #fff3d6; font-weight: 600; }
+
+.site-footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 20px 0 30px; }
+
+/* ===== Mobile ===== */
+@media (max-width: 600px) {
+  .card { padding: 16px; }
+  h1 { font-size: 1.5rem; }
+  .tape span { width: 24px; height: 32px; font-size: .95rem; }
+  .btn { flex: 1; }
+}
