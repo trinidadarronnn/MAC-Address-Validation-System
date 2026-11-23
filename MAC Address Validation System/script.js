@@ -276,3 +276,47 @@ function drawTrapEdge(fromState) {
   drawEdge($('dfaSvg'), a, TRAP_POS, '', 'trap-edge');
   $('dfaSvg').lastChild.setAttribute('marker-end', 'url(#arrow)');
 }
+
+function stopAnimation() { timers.forEach(clearTimeout); timers = []; }
+
+function clearAll() {
+  stopAnimation();
+  input.value = '';
+  resetHighlights();
+  $('tape').innerHTML = '';
+  $('result').classList.add('hidden');
+  document.querySelector('#traceTable tbody').innerHTML =
+    '<tr><td colspan="5" class="muted">Validate a MAC address to see the trace.</td></tr>';
+  input.focus();
+}
+
+// Run all sample test cases through the DFA and show PASS / FAIL
+function runAllTests() {
+  document.querySelectorAll('#testTable tbody tr').forEach(row => {
+    const actual = runDFA(row.dataset.mac).accepted ? 'ACCEPTED' : 'NOT ACCEPTED';
+    const cell = row.querySelector('.actual');
+    const pass = actual === row.dataset.expected;
+    cell.textContent = `${actual} (${pass ? 'PASS' : 'FAIL'})`;
+    cell.className = 'actual ' + (pass ? 'pass' : 'fail');
+  });
+}
+
+// ----- Connect buttons to functions -----
+buildDiagram();
+$('validateBtn').addEventListener('click', validate);
+$('clearBtn').addEventListener('click', clearAll);
+$('runTestsBtn').addEventListener('click', runAllTests);
+input.addEventListener('keydown', (e) => { if (e.key === 'Enter') validate(); });
+
+// Clicking a sample puts it in the input field
+document.querySelectorAll('.sample').forEach(btn => {
+  btn.addEventListener('click', () => {
+    stopAnimation();
+    resetHighlights();
+    input.value = btn.textContent;
+    drawTape(input.value);
+    $('result').classList.add('hidden');
+    input.focus();
+    $('validator').scrollIntoView({ behavior: 'smooth' });
+  });
+});
