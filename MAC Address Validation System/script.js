@@ -156,3 +156,123 @@ function buildDiagram() {
     const t = svgEl('text', { x: p.x, y: p.y }, g);
     t.textContent = 'q' + i;
   }
+
+  // Trap state qd
+  const gd = svgEl('g', { id: 'state-qd', class: 'node trap' }, svg);
+  svgEl('circle', { cx: TRAP_POS.x, cy: TRAP_POS.y, r: R }, gd);
+  svgEl('text', { x: TRAP_POS.x, y: TRAP_POS.y }, gd).textContent = 'qd';
+  const note = svgEl('text', { x: TRAP_POS.x + 40, y: TRAP_POS.y + 4, class: 'note' }, svg);
+  note.textContent = 'trap: any other character from any state, and every character after qd';
+}
+
+// Remove all highlighting from the diagram, tape, trace and process list
+function resetHighlights() {
+  document.querySelectorAll('.node').forEach(n => n.classList.remove('current', 'visited', 'accept', 'reject'));
+  document.querySelectorAll('.trap-edge').forEach(e => e.remove());
+  document.querySelectorAll('#processList li').forEach(li => li.classList.remove('on'));
+}
+
+function stateNode(s) { return $('state-' + s); }          // s is a number or 'qd'
+
+function setProcessStep(n) {                               // highlight step n (1-5)
+  document.querySelectorAll('#processList li').forEach((li, i) => li.classList.toggle('on', i === n - 1));
+}
+
+// Show the characters as boxes (the "tape")
+function drawTape(text) {
+  const tape = $('tape');
+  tape.innerHTML = '';
+  for (const ch of text) {
+    const s = document.createElement('span');
+    s.textContent = ch === ' ' ? '\u2423' : ch;            // show a visible mark for spaces
+    tape.appendChild(s);
+  }
+}
+
+// Fill the step-by-step trace table
+function drawTrace(result) {
+  const body = document.querySelector('#traceTable tbody');
+  body.innerHTML = '';
+  if (result.trace.length === 0) {
+    body.innerHTML = '<tr><td colspan="5" class="muted">No characters were read.</td></tr>';
+    return;
+  }
+  result.trace.forEach((s, k) => {
+    const tr = document.createElement('tr');
+    tr.id = 'trace-' + k;
+    const exp = s.expected === 'hex' ? 'hex (0-9, A-F, a-f)' : s.expected === ':' ? 'colon ":"' : 'nothing (end)';
+    const to = s.to === TRAP ? 'qd' : 'q' + s.to;
+    tr.innerHTML = `<td>${k + 1}</td><td><code></code></td><td>${exp}</td><td>q${s.from}</td><td>${to}</td>`;
+    tr.querySelector('code').textContent = s.ch;           // textContent keeps odd characters safe
+    body.appendChild(tr);
+  });
+}
+
+// Show the final ACCEPTED / NOT ACCEPTED box
+function showResult(result, input) {
+  const box = $('result');
+  box.classList.remove('hidden', 'accepted', 'rejected');
+  box.classList.add(result.accepted ? 'accepted' : 'rejected');
+  $('resultWord').textContent = result.accepted ? 'ACCEPTED' : 'NOT ACCEPTED';
+  $('resultReason').textContent = result.reason;
+  // Extra check: compare the DFA with the regular expression from the project
+  const regex = /^[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}$/;
+  const agree = regex.test(input) === result.accepted;
+  $('resultCheck').textContent = `Length: ${input.length} character(s), expected 17. ` +
+    `Regex cross-check: ${agree ? 'matches the DFA result.' : 'DIFFERENT from the DFA result!'}`;
+}
+
+// Main action: validate and animate the DFA one character at a time
+function validate() {
+  stopAnimation();
+  const text = input.value;
+  const result = runDFA(text);
+
+  resetHighlights();
+  drawTape(text);
+  drawTrace(result);
+  $('result').classList.add('hidden');
+  setProcessStep(1);
+  stateNode(0).classList.add('current');                    // start in q0
+
+  const DELAY = 250;                                        // milliseconds per character
+  const spans = $('tape').children;
+
+  result.trace.forEach((s, k) => {
+    timers.push(setTimeout(() => {
+      setProcessStep(k < 16 ? 3 : 4);
+      // tape: mark earlier characters done, current one active
+      if (k > 0) spans[k - 1].className = 'done';
+      spans[k].className = 'active';
+      // trace table: highlight the row being processed
+      document.querySelectorAll('#traceTable tr.active-row').forEach(r => r.classList.remove('active-row'));
+      $('trace-' + k).classList.add('active-row');
+      // diagram: previous state visited, new state current
+      stateNode(s.from).classList.remove('current');
+      stateNode(s.from).classList.add('visited');
+      stateNode(s.to).classList.add('current');
+      if (s.to === TRAP) {                                  // draw the dashed arrow into the trap state
+        spans[k].className = 'bad';
+        drawTrapEdge(s.from);
+      }
+    }, (k + 1) * DELAY));
+  });
+
+  // After the last character: show the verdict
+  timers.push(setTimeout(() => {
+    const last = stateNode(result.finalState);
+    last.classList.remove('current');
+    last.classList.add(result.accepted ? 'accept' : 'reject');
+    if (!result.accepted && result.finalState !== TRAP) {   // input ended early: stopped in a non-accepting state
+      spans[spans.length - 1] && (spans[spans.length - 1].className = 'bad');
+    }
+    setProcessStep(5);
+    showResult(result, text);
+  }, (result.trace.length + 1) * DELAY));
+}
+
+function drawTrapEdge(fromState) {
+  const a = fromState === TRAP ? TRAP_POS : statePos(fromState);
+  drawEdge($('dfaSvg'), a, TRAP_POS, '', 'trap-edge');
+  $('dfaSvg').lastChild.setAttribute('marker-end', 'url(#arrow)');
+}
