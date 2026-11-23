@@ -45,3 +45,74 @@ h3 { margin: 22px 0 8px; font-size: 1.05rem; }
 .lead { margin: 0 0 20px; max-width: 70ch; }
 .muted { color: var(--muted); }
 code { background: #eef2f5; padding: 1px 6px; border-radius: 4px; font-family: Consolas, monospace; }
+
+/* ===== Input and buttons ===== */
+.field-label { display: block; font-weight: 600; margin-bottom: 6px; }
+#macInput { width: 100%; padding: 12px 14px; font-size: 1.2rem; letter-spacing: 1px;
+            font-family: Consolas, "Courier New", monospace;
+            border: 2px solid var(--line); border-radius: 8px; }
+#macInput:focus { outline: none; border-color: var(--primary); }
+
+.button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn { padding: 10px 22px; font-size: 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;
+       border: 2px solid var(--primary); }
+.btn.primary { background: var(--primary); color: #fff; }
+.btn.primary:hover { background: var(--primary-dark); }
+.btn.secondary { background: #fff; color: var(--primary); }
+.btn.secondary:hover { background: #eaf3f5; }
+.btn:focus-visible, .sample:focus-visible { outline: 3px solid var(--current); outline-offset: 2px; }
+
+/* ===== Input tape (one box per character) ===== */
+.tape { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 16px; min-height: 8px; }
+.tape span { width: 30px; height: 38px; display: flex; align-items: center; justify-content: center;
+             border: 1px solid var(--line); border-radius: 5px; background: #f8fafb;
+             font-family: Consolas, monospace; font-size: 1.1rem; }
+.tape span.done   { background: #dbeef2; border-color: var(--primary); }
+.tape span.active { background: var(--current); border-color: var(--current); font-weight: 700; }
+.tape span.bad    { background: var(--bad); color: #fff; border-color: var(--bad); }
+
+/* ===== Result ===== */
+.hidden { display: none; }
+.result { margin-top: 20px; padding: 18px 20px; border-radius: 8px; border-left: 8px solid; }
+.result.accepted { background: var(--ok-bg);  border-color: var(--ok); }
+.result.rejected { background: var(--bad-bg); border-color: var(--bad); }
+.result-word { font-size: 1.7rem; font-weight: 800; letter-spacing: .5px; }
+.accepted .result-word { color: var(--ok); }
+.rejected .result-word { color: var(--bad); }
+.result-reason { margin: 6px 0 0; }
+.result-check { margin: 8px 0 0; font-size: .9rem; color: var(--muted); }
+
+/* ===== DFA diagram (SVG) ===== */
+.diagram-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfd; }
+#dfaSvg { width: 100%; min-width: 560px; height: auto; display: block; }
+.edge { stroke: #7f8c8d; stroke-width: 1.6; fill: none; }
+.edge-label { font-size: 12px; fill: var(--muted); text-anchor: middle; }
+.trap-edge { stroke: var(--bad); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+.node circle { fill: #fff; stroke: var(--primary); stroke-width: 2; }
+.node text { font-size: 14px; text-anchor: middle; dominant-baseline: central; fill: var(--ink); }
+.node.visited circle { fill: #dbeef2; }
+.node.current circle { fill: var(--current); stroke: #b45309; }
+.node.accept circle  { fill: var(--ok); stroke: var(--ok); }
+.node.accept text, .node.reject text { fill: #fff; }
+.node.reject circle  { fill: var(--bad); stroke: var(--bad); }
+.node.trap circle { stroke: var(--bad); }
+.note { font-size: 12px; fill: var(--muted); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; font-size: .9rem; color: var(--muted); }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px;
+       border: 1px solid var(--primary); vertical-align: -1px; }
+.dot.current { background: var(--current); }
+.dot.visited { background: #dbeef2; }
+.dot.accept  { background: var(--ok); }
+.dot.reject  { background: var(--bad); }
+
+/* ===== Tables ===== */
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+th { background: #f0f4f6; }
+tr.active-row td { background: #fff3d6; }
+td.pass { color: var(--ok); font-weight: 700; }
+td.fail { color: var(--bad); font-weight: 700; }
+.sample { font-family: Consolas, monospace; font-size: 1rem; background: none; border: none;
+          color: var(--primary); text-decoration: underline; cursor: pointer; padding: 2px 0; }
